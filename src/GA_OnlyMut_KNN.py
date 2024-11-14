@@ -43,10 +43,10 @@ pop_size: int = 20  # Population size for each generation
 network_sizes: tuple = (20, 21)  # Size of the networks in the encoding
 gen_max: int = 100  # Maximum number of generations
 t_size: int = 5  # Tournament size for selection
-cr: float = 0.0  # Crossover rate (probability of crossover between individuals)
-mr: float = 0.8  # Mutation rate (probability of mutating an individual)
+cr: float = 0.8  # Crossover rate (probability of crossover between individuals)
+mr: float = 0.4  # Mutation rate (probability of mutating an individual)
 elitism: int = 1  # Number of elite individuals to retain each generation
-n_workers: int = mp.cpu_count() - 2  # Number of workers for multiprocessing (leaves 2 CPU cores free)
+n_workers: int = mp.cpu_count()  # Number of workers for multiprocessing (leaves 2 CPU cores free)
 labels = ["C1", "C2"]
 
 # DEAP framework setup: Create fitness and individual classes
