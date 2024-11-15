@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && apt-get clean \
 
-RUN apt-get install software-properties-common && add-apt-repository ppa:nest-simulator/nest
+RUN apt-get install software-properties-common && add-apt-repository ppa:nest-simulator/nest \
     && apt-get update
 
 RUN apt-get install nest
