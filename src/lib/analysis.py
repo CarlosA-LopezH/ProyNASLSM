@@ -5,7 +5,7 @@ from numpy import mean as npMean, std as npStd
 from scipy.stats import kruskal as spKruskal, mannwhitneyu as spMannwhitneyu, shapiro as spShapiro
 from scikit_posthocs import posthoc_dunn
 # Source imports
-from src.lib.visualization import fitness_std
+from lib.visualization import fitness_std
 
 def plot_convergence_runs(id_method: str, num_runs: int, root: str = "../Experiments/Debugging/checkpoint/") -> None:
     """
