@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     python3-dev \
     build-essential \
-    && apt-get clean \
+    software-properties-common \
+    && apt-get clean
 
 RUN apt-get install software-properties-common \
     && apt-get update
