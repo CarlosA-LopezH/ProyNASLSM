@@ -13,10 +13,10 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && apt-get clean \
 
-RUN apt-get install software-properties-common && add-apt-repository ppa:nest-simulator/nest \
+RUN apt-get install software-properties-common \
     && apt-get update
 
-RUN apt-get install nest
+RUN add-apt-repository ppa:nest-simulator/nest && apt-get install nest
 
 # Establece 'python3' como el comando por defecto para 'python'
 RUN ln -s /usr/bin/python3 /usr/bin/python
