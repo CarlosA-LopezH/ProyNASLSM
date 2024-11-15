@@ -1,5 +1,5 @@
-# NEST image
-FROM nest/nest-simulator:3.8
+# Imagen Ubuntu
+FROM ubuntu:18.04
 
 LABEL mainteiner=@naperez
 
@@ -7,11 +7,15 @@ LABEL mainteiner=@naperez
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Aqui se deben dependencias necesarias para el proyecto
+RUN add-apt-repository ppa:nest-simulator/nest
+
 RUN apt-get update && apt-get install -y \
     python3-pip \
     python3-dev \
     build-essential \
-    && apt-get clean
+    && apt-get clean \
+
+RUN apt-get install nest
 
 # Establece 'python3' como el comando por defecto para 'python'
 RUN ln -s /usr/bin/python3 /usr/bin/python
