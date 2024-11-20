@@ -26,9 +26,11 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 # Actualiza pip a la última versión
 RUN pip3 install --upgrade pip
 
+RUN apt-get install nest -y
+
 # Librerías requeridas de Python Proy-Detección-Nitrógeno
 RUN pip3 install \
-    numpy \
+    numpy==1.21.5 \
     deap \
     scikit-learn \
     scikit-posthocs \
@@ -36,8 +38,6 @@ RUN pip3 install \
     matplotlib \
     seaborn
 
-RUN apt-get install nest -y
+RUN /usr/bin/nest_vars.sh
 
-RUN source /usr/bin/nest_vars.sh
-
-ENTRYPOINT [ "/bin/bash"]
+ENTRYPOINT ["/bin/bash"]
