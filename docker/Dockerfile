@@ -19,7 +19,6 @@ RUN apt-get update
 
 RUN add-apt-repository ppa:nest-simulator/nest
 RUN apt-get update
-RUN apt-get install nest -y
 
 # Establece 'python3' como el comando por defecto para 'python'
 RUN ln -s /usr/bin/python3 /usr/bin/python
@@ -37,5 +36,8 @@ RUN pip3 install \
     matplotlib \
     seaborn
 
+RUN apt-get install nest -y
+
+RUN source /usr/bin/nest_vars.sh
 
 ENTRYPOINT [ "/bin/bash"]
