@@ -17,9 +17,9 @@ from nest.lib.hl_api_info import SetStatus
 # DEAP imports
 from deap import tools
 # Source imports
-from encoding import Encoding
-from visualization import fitness_std, plot_input_data, plot_vm_separate, fitness_min, visualize_liquid, do_tsne, plot_spikes, exec_time
-from auxiliary import spike_rate
+from .encoding import Encoding
+from .visualization import fitness_std, plot_input_data, plot_vm_separate, fitness_min, visualize_liquid, do_tsne, plot_spikes, exec_time
+from .auxiliary import spike_rate
 
 # Level of verbosity for NEST kernel
 nest.set_verbosity("M_ERROR")

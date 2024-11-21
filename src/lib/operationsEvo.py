@@ -5,9 +5,9 @@ from numpy import ndarray, array as npArray
 from sklearn.neighbors import KNeighborsClassifier as KNN
 from random import sample, uniform
 # Source imports
-from encoding import Encoding
-from LSM import LSM, readout
-from auxiliary import spike_rate
+from .encoding import Encoding
+from .LSM import LSM, readout
+from .auxiliary import spike_rate
 
 
 # ----------------------------------------------------- #
