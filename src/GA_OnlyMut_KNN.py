@@ -34,7 +34,7 @@ with open(f"../data/FR2_jitter.data", "rb") as file:
     data = pickle.load(file)
 
 # Split the dataset
-data_evolution, data_validation = split_data(data["Classes"], data, 0.7, 0.3)
+data_evolution, data_validation = split_data(data["Classes"], data, 0.7, 0.8)
 
 # Parameters for Genetic Algorithm
 num_channels: int = data["Channels"]  # Number of input channels for encoding
