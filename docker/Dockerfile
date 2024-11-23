@@ -29,7 +29,7 @@ RUN pip3 install --upgrade pip
 RUN apt-get install nest -y
 
 # Librerías requeridas de Python Proy-Detección-Nitrógeno
-RUN pip3 install \
+RUN pip3 install numpy==1.26\
     deap \
     scikit-learn \
     scikit-posthocs \
