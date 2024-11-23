@@ -33,6 +33,7 @@ RUN pip3 install numpy==1.26\
     deap \
     scikit-learn \
     scikit-posthocs \
+    scipy \
     matplotlib \
     seaborn
 
