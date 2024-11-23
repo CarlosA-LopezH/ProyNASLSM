@@ -30,14 +30,12 @@ RUN apt-get install nest -y
 
 # Librerías requeridas de Python Proy-Detección-Nitrógeno
 RUN pip3 install \
-    numpy==1.21.5 \
     deap \
     scikit-learn \
     scikit-posthocs \
-    scipy \
     matplotlib \
     seaborn
 
 RUN /usr/bin/nest_vars.sh
 
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/bin/bash", "-c", "source /usr/bin/nest_vars.sh && /bin/bash"]
