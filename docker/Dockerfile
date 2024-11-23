@@ -40,4 +40,4 @@ RUN pip3 install \
 
 RUN /usr/bin/nest_vars.sh
 
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/bin/bash", "-c", "source /usr/bin/nest_vars.sh && /bin/bash"]
