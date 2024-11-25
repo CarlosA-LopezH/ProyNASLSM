@@ -7,7 +7,7 @@ Variables:
     id_method: Id of the method. Intended to identify results and checkpoints.
     id_run: ID of the run. Intended to identify the run of the method.
     n_workers: Number of parallel process = cpu count (cpu_count - 2 for local experiments) # 1 for non-parallel experiments.
-    freq_check: Frequency for updating the checkpoint = 5.
+    freq_check: Frequency for updating the checkpoints = 5.
     labels: List of name of labels = Depending on the dataset. Intended for visualization purposes.
     pop_size: Population size = 20
     gen_max: Max number of generations = 100
@@ -49,7 +49,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
     method: str = f"{id_method}-{ds_name}" # ID of the method. Intended to identify results and checkpoints.
     freq_check: int = 5 # Frequency of saving checkpoints.
     # Load Dataset
-    with open(f"../Datasets/{ds_name}.data", "rb") as file:
+    with open(f"../data/{ds_name}.data", "rb") as file:
         data = pickle.load(file)
     # Separation of data:
     # Train-Test = 70% | Validation = 30% (p_validation)
@@ -90,7 +90,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
     stats.register("std", npStd)
     stats.register("min", npMin)
     stats.register("max", npMax)
-    # Check if a checkpoint exists to resume the evolution.
+    # Check if a checkpoints exists to resume the evolution.
     if not Path(f"checkpoints/{method}_{id_run}.chck").exists():
         gen: int = 0 # Initialize generation count.
         pop: list = toolbox.population(n=pop_size) # Population initialization.
@@ -105,7 +105,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
                        evals=pop_size, **record_stats) # Update logbook.
         print(f"Initial Population (Gen 0): {record_stats} - Elapsed Time: {time.report_elapsed(): .4} - Neurons: {pyMean([p.nT for p in pop])}")
         time.update() # Update time.
-    else: # Load from checkpoint.
+    else: # Load from checkpoints.
         gen, pop, hof, logbook, py_state, np_state = get_checkpoint(root="checkpoints", id_method=method,
                                                                     id_run=id_run)
         pySetstate(py_state) # Set python state.
@@ -144,11 +144,11 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
         print(f"Total run time: {logbook.select('t')[-1]: .4}")
         time.update() # Update time.
         bf = logbook.select("max")[-1] # Get the best fitness so far.
-        if gen % freq_check == 0: # Update checkpoint.
+        if gen % freq_check == 0: # Update checkpoints.
             save_checkpoint(root="checkpoints", id_method=method, id_run=id_run, gen=gen, pop=pop, hof=hof, log=logbook,
                             py_state=pyGetstate(), np_state=npGetstate())
         gen += 1 # Update generation
-    # Las checkpoint update.
+    # Las checkpoints update.
     save_checkpoint(root="checkpoints", id_method=method, id_run=id_run, gen=gen, pop=pop, hof=hof, log=logbook,
                     py_state=pyGetstate(), np_state=npGetstate(), last=True)
     # Close the multiprocessing pool to free resources, if necessary.

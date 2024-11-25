@@ -271,8 +271,8 @@ def mutation_simple(individual: Encoding) -> Encoding:
 # ----------------------------------------------------- #
 def get_checkpoint(root: str, id_method: str, id_run: str) -> tuple:
     """
-    Recover checkpoint
-    :param root: Root directory to retrieve checkpoint.
+    Recover checkpoints
+    :param root: Root directory to retrieve checkpoints.
     :param id_method: ID of the method.
     :param id_run: ID of the run.
     :return:
@@ -285,15 +285,15 @@ def get_checkpoint(root: str, id_method: str, id_run: str) -> tuple:
     logbook = checkpoint["Logbook"]
     pyState = checkpoint["pyRandomState"]
     npState = checkpoint["npRandomState"]
-    print(f"Loading checkpoint {id_method}_{id_run}.chck")
+    print(f"Loading checkpoints {id_method}_{id_run}.chck")
     print(f"Current run time: {logbook.select('t')[-1]}")
     print(f"Starting from generation: {gen}")
     return gen, pop, hof, logbook, pyState, npState
 
 def save_checkpoint(root: str, id_method: str, id_run: str, gen, pop, hof, log, py_state, np_state, last: bool = False) -> None:
     """
-    Save checkpoint
-    :param root: Root directory to retrieve checkpoint.
+    Save checkpoints
+    :param root: Root directory to retrieve checkpoints.
     :param id_method: ID of the method.
     :param id_run: ID of the run.
     :param gen: Current generation.
@@ -302,7 +302,7 @@ def save_checkpoint(root: str, id_method: str, id_run: str, gen, pop, hof, log, 
     :param log: Logbook
     :param py_state: Python random state.
     :param np_state: Numpy random state.
-    :param last: Flag to indicate if this is the last checkpoint.
+    :param last: Flag to indicate if this is the last checkpoints.
     :return:
     """
     checkpoint = {"Generation": gen,
@@ -314,9 +314,9 @@ def save_checkpoint(root: str, id_method: str, id_run: str, gen, pop, hof, log, 
     with open(f"{root}/{id_method}_{id_run}.chck", "wb") as file:
         pickle.dump(checkpoint, file)
     if not last:
-        print(f"Saved checkpoint for generation: {gen}!")
+        print(f"Saved checkpoints for generation: {gen}!")
     else:
-        print(f"Saved last checkpoint!")
+        print(f"Saved last checkpoints!")
 
 
 
