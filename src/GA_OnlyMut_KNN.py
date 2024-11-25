@@ -157,7 +157,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
         pool.join()
 
     # ---- Validation:
-    plot_options = {"convergence": True, "time": False, "liquid": True, "separability": True, "spikes": False,
+    plot_options = {"convergence": False, "time": False, "liquid": False, "separability": False, "spikes": False,
                     "vms": False, "input": False} # Plot visualization options.
     acc_val = validation_sequence(data=data_val, labels=labels, population=pop, logbook=logbook, hof=hof,
                                   time_sim=sim_time, individual_on="Best", plot_options=plot_options)
