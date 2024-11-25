@@ -31,10 +31,10 @@ from numpy.random import set_state as npSetstate, get_state as npGetstate
 # DEAP imports
 from deap import base, creator, tools
 # Source imports
-from .lib.encoding import Encoding
-from .lib.operationsEvo import initEncoding, evaluation, xover_blx, mutation_simple, fitting, get_checkpoint, save_checkpoint
-from .lib.auxiliary import ExecutionTime, split_data
-from .lib.LSM import validation_sequence
+from lib.encoding import Encoding
+from lib.operationsEvo import initEncoding, evaluation, xover_blx, mutation_simple, fitting, get_checkpoint, save_checkpoint
+from lib.auxiliary import ExecutionTime, split_data
+from lib.LSM import validation_sequence
 
 def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[float, float, int, float]:
     """
