@@ -66,7 +66,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
     # ---- LSM Parameters:
     channels: int = data["Channels"] # Number of input channels.
     sim_time: int = data["Tmax"] + 10 # Duration of NEST simulation.
-    net_size: tuple = (20, 21) # Number of neurons in the liquid.
+    net_size: tuple | int = 20 # Number of neurons in the liquid.
     # ---- DEAP Framework:
     # Create fitness and individual classes.
     creator.create("Fitness", base.Fitness, weights=(1.0,))  # Fitness maximization.
