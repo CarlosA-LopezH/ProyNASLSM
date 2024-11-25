@@ -257,7 +257,7 @@ def validation(encoding: Encoding, lsm: LSM, data: dict, time_sim: float) -> tup
 
 def validation_sequence(data: dict, labels: list[str], population: list, logbook: tools.Logbook, hof: tools.HallOfFame,
                         time_sim: float, individual_on: str | int = "Best", inConnectivity: float = 0.5,
-                        plot_options: dict | None = None) -> None:
+                        plot_options: dict | None = None) -> float:
     """
     Validation Sequence:
         1. Plots convergence plot.
@@ -297,7 +297,7 @@ def validation_sequence(data: dict, labels: list[str], population: list, logbook
     # 2. Plot execution time
     #   Getting information from logbook
     exec_t: list = logbook.select("t")
-    elapsed_t: list = logbook.select("e_t")
+    elapsed_t: list = logbook.select("elapse_time")
     #   Plot
     if plot_options["time"]:
         exec_time(gens, exec_t, elapsed_t)
@@ -347,6 +347,7 @@ def validation_sequence(data: dict, labels: list[str], population: list, logbook
             plot_vm_separate(vms[i], lsm, name=f"Class {c}: Membrane Potential per Neuron")
             plot_vm_separate(vms[i], lsm, name=f"Class {c}: Membrane Potential per Neuron with Threshold values",
                              w_threshold=True)
+    return acc
 
 if __name__ == '__main__':
     """ Test on differences between simulations"""

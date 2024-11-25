@@ -13,8 +13,12 @@ from .auxiliary import spike_rate
 # ----------------------------------------------------- #
 #                       Initialization                  #
 # ----------------------------------------------------- #
-def initEncoding(encoding: Encoding, dimensions: tuple, channels: int) -> Encoding:
-    n_neurons: int = npRandint(dimensions[0], dimensions[1])
+def initEncoding(encoding: Encoding, dimensions: tuple | int, channels: int) -> Encoding:
+    # Check if dimensions is a range or just one number (fixed size)
+    if isinstance(dimensions, tuple):
+        n_neurons: int = npRandint(dimensions[0], dimensions[1])
+    else:
+        n_neurons: int = dimensions
     return encoding(n_neurons, channels)
 
 # ----------------------------------------------------- #
@@ -123,8 +127,8 @@ def xover_blx(parent1: Encoding, parent2: Encoding, alpha: float = 0.5) -> tuple
                 # Establish bounds
                 lower -= d * alpha
                 # Restriction: T_Ref and Tau_M cannot be lower than 0.
-                if key == 't_ref' or key == 'tau_m' and lower < 0.:
-                    lower = 0.
+                if key == 't_ref' or key == 'tau_m' and lower <= 0.:
+                    lower = 0.01
                 upper += d * alpha
                 # Update configurations
                 child1.configurations[i][key] = round(uniform(lower, upper), 2)
@@ -153,6 +157,51 @@ def xover_blx(parent1: Encoding, parent2: Encoding, alpha: float = 0.5) -> tuple
         child2.classifier = None
     return child1, child2
 
+def xover_uniform(parent1: Encoding, parent2: Encoding, probability: float = 0.5) -> tuple[Encoding, Encoding]:
+    """
+    Crossover operation: Adaptation of Uniform crossover. This method is applied only if the size of parents is equal.
+    :param parent1: Parent 1.
+    :param parent2: Parent 2.
+    :param probability: Value of variation.
+    :return: Offspring
+    """
+    # Prepare encoding for both offspring
+    config_c1 = []
+    pos_c1 = []
+    config_c2 = []
+    pos_c2 = []
+    # Iterate over neurons
+    for i in range(parent1.nT):
+        # Randomly assign the inheritance of the neuron.
+        if npRand() <= probability:
+            # Child 1 receives the neuron from parent 1.
+            config_c1.append(parent1.configurations[i])
+            pos_c1.append(parent1.positions[i])
+            # Child 2 receives the neuron from parent 2.
+            config_c2.append(parent2.configurations[i])
+            pos_c2.append(parent2.positions[i])
+        else:
+            # Child 1 receives the neuron from parent 2.
+            config_c1.append(parent2.configurations[i])
+            pos_c1.append(parent2.positions[i])
+            # Child 2 receives the neuron from parent 1.
+            config_c2.append(parent1.configurations[i])
+            pos_c2.append(parent1.positions[i])
+    # Generate both children and assign their configurations and positions.
+    child1, child2 = parent1, parent2
+    child1.configurations = config_c1
+    child1.positions = pos_c1
+    child2.configurations = config_c2
+    child2.positions = pos_c2
+    # Update encoding: Child 1
+    child1.polarity_indexing()
+    child1.set_seed()
+    child1.classifier = None
+    # Update encoding: Child 1
+    child2.polarity_indexing()
+    child2.set_seed()
+    child2.classifier = None
+    return child1, child2
 # ----------------------------------------------------- #
 #                       Mutation                        #
 # ----------------------------------------------------- #

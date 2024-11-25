@@ -77,14 +77,14 @@ class DataLoader:
         """ Iterate over samples according to the permutation order"""
         return self.spike_data[self.permutation[item]], self.labels[self.permutation[item]]
 
-def split_data(classes: int, data: dict, p_evolution: float, p_validation: float) -> tuple[dict, dict]:
+def split_data(classes: int, data: dict, p_train: float, p_validation: float) -> tuple[dict, dict]:
     """
     Method to split data in two sets: For evolutionary process, and for validation. This is tailored for data produced
         for the frequency & pattern recognition task made in data.py
     Both the spike data & labels are returned in a random permutation. TODO: Make it as to return the DataLoader directly
     :param classes: Number of classes for the task.
     :param data: Dictionary of data (spikes and labels) to be split.
-    :param p_evolution: Percentages of data to be used in evolutionary process (Train set). Not complementary with p_validation. It may be 1.0, from which the test set becomes empty
+    :param p_train: Percentages of data to be used in evolutionary process (Train set). Not complementary with p_validation. It may be 1.0, from which the test set becomes empty
     :param p_validation: Percentage of data to be used in validation process.
     :return: Dictionaries for evolutionary process (train and test) and validation process.
     """
@@ -104,7 +104,7 @@ def split_data(classes: int, data: dict, p_evolution: float, p_validation: float
     data_loader = DataLoader(spike_data=data["Spikes"][:sel_evolution], labels=data["Labels"][:sel_evolution])
     data_evolution_spikes, data_evolution_labels = data_loader.permuted_samples()
     # Data for evolution needs further split in training and testing subsets
-    sel_training = int(p_evolution * sel_evolution)
+    sel_training = int(p_train * sel_evolution)
     # This used to ensure to have a perfect balanced training and testing sets. Since instances are now random, this is
     # no longer achievable. Nevertheless, we are keeping it for latter improvement.
     if sel_training % classes:

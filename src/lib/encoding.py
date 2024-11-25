@@ -117,7 +117,6 @@ class Encoding:
                 # Since the new neuron corresponds to the last append, the (size - 1) of the configurations is added
                 # as index.
                 inh_indexes.append(len(self.configurations) - 1)
-                self.nT += 1
         # Upate indexes and sizes
         self.indexesE = exc_indexes
         self.indexesI = inh_indexes
