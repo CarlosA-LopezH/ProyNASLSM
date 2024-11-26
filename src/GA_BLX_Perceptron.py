@@ -165,5 +165,6 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
 
 if __name__ == '__main__':
     method = "GA_BLX_Perceptron-MCA2025"
-    main(ds_name="FR5", id_method=f"{method}", id_run=f"{1}", n_workers=cpu_count())
+    for i in range(30):
+        main(ds_name="FR5", id_method=f"{method}", id_run=f"{i+1}", n_workers=cpu_count())
 
