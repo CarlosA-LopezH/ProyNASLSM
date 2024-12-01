@@ -28,6 +28,7 @@ from pathlib import Path
 from statistics import mean as pyMean
 from random import setstate as pySetstate, random as pyRandom, getstate as pyGetstate
 from numpy.random import set_state as npSetstate, get_state as npGetstate
+import psutil
 # DEAP imports
 from deap import base, creator, tools
 # Source imports
@@ -142,6 +143,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
                        evals=logbook.select("evals")[-1] + len(new_individuals), **record_stats)  # Update logbook.
         print(f"Generation {gen}: {record_stats}")
         print(f"Total run time: {logbook.select('t')[-1]: .4}")
+        print(f"CPU status: %CPU: {psutil.cpu_percent()} - %RAM: {psutil.virtual_memory().percent}")
         time.update() # Update time.
         bf = logbook.select("max")[-1] # Get the best fitness so far.
         if gen % freq_check == 0: # Update checkpoints.
@@ -166,5 +168,6 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
 if __name__ == '__main__':
     method = "GA_BLX_Perceptron-MCA2025"
     for i in range(30):
-        main(ds_name="FR5", id_method=f"{method}", id_run=f"{i+1}", n_workers=cpu_count())
+        print(f">>>>>>>>>>>> Run {i+1} <<<<<<<<<<<<")
+        main(ds_name="PR4", id_method=f"{method}", id_run=f"{i+1}", n_workers=cpu_count())
 

@@ -35,6 +35,7 @@ RUN pip3 install \
     scikit-learn \
     scikit-posthocs \
     scipy \
+    psutil \
     matplotlib \
     seaborn
 
