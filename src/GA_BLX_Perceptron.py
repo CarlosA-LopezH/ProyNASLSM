@@ -169,5 +169,5 @@ if __name__ == '__main__':
     method = "GA_BLX_Perceptron-MCA2025"
     for i in range(30):
         print(f">>>>>>>>>>>> Run {i+1} <<<<<<<<<<<<")
-        main(ds_name="PR8", id_method=f"{method}", id_run=f"{i+1}", n_workers=cpu_count())
+        main(ds_name="PR12", id_method=f"{method}", id_run=f"{i+1}", n_workers=cpu_count())
 
