@@ -59,7 +59,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
     # Separation of data:
     # Train-Test = 70% | Validation = 30% (p_validation)
     # Train = 70% (p_train) | Test = 30%
-    data_evolve, data_val = split_data(classes=data["Classes"], data=data, p_validation=0.8, p_train=0.7)
+    data_evolve, data_val = split_data(classes=data["Classes"], data=data, p_validation=0.3, p_train=0.7)
     labels: list = data["Labels Names"] # List of name of labels.
     # ---- GA Parameters:
     pop_size: int = 50 # Population size.
