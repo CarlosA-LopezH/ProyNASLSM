@@ -173,10 +173,10 @@ if __name__ == '__main__':
     initial_b = []
     final_b = []
     validation_b = []
-    for i in range(3):
+    for i in range(30):
         print(f">>>>>>>>>>>> Run {i+1} <<<<<<<<<<<<")
         best_fitness, validation, lb = main(ds_name=db, id_method=f"{method}", id_run=f"{i+1}",
-                                            n_workers=cpu_count()-4)
+                                            n_workers=cpu_count())
         initial_b.append(lb[0]["max"])
         final_b.append(best_fitness)
         validation_b.append(validation[0])
