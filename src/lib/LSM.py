@@ -37,7 +37,7 @@ class LSM:
         self.seed: int = encoding.lsm_seed  # NEST seed.
         self.inConn = inConn  # Input connectivity.
         self.neuronNoise_mean: float = neuronNoise_mean  # Standard deviation of the noise current amplitude (pA)
-        self.neuronNoise_std: float = 2. # Standard deviation of the noise current amplitude (pA)
+        self.neuronNoise_std: float = neuronNoise_mean # Standard deviation of the noise current amplitude (pA)
         self.Ws: float = Ws  # General strength for synapsis
         # TODO: Add window parameter to control the starting time for monitors to get information.
         # Topology parameters
@@ -97,14 +97,18 @@ class LSM:
                                positions=nest.spatial.free(self.nE_pos))
         self.neuronsI = Create(model=self.neuron_model, n=self.nI, params=self.nI_conf,
                                positions=nest.spatial.free(self.nI_pos))
-        self.noiseG = Create("noise_generator", params={"mean": self.neuronNoise_mean, "std": self.neuronNoise_std})
+        self.noiseG = Create("noise_generator", params={"mean": self.neuronNoise_mean,
+                                                        "std": self.neuronNoise_std,
+                                                        "std_mod": self.neuronNoise_std,
+                                                        "phase": 1.,
+                                                        "frequency": 250.})
         # Create Monitors
         self.monitor_vm = Create(model="multimeter", params={"record_from": ["V_m"]})
         self.monitor_spikes = Create(model="spike_recorder")
         # TODO: Autapses is False since I am not sure if this actually affects.
         # --------------------> Inputs to excitatory: Out-degree
         Connect(self.inputC, self.neuronsE, conn_spec={"rule": "fixed_outdegree",
-                                                       "outdegree": max(1, int(self.nE * self.inConn))},
+                                                       "outdegree": max(1, round(self.nE * self.inConn))},
                 syn_spec={"synapse_model": "Input", "weight": normal(self.Ws, 2.)})
         # --------------------> Excitatory connections
         # To Excitatory
@@ -121,8 +125,8 @@ class LSM:
                                                          'allow_autapses': False},
                 syn_spec={"synapse_model": "i_syn", "weight": gaussian(distance) * -2 * self.Ws})
         # --------------------> Noise connections
-        Connect(self.noiseG, self.neuronsE)
-        Connect(self.noiseG, self.neuronsI)
+        Connect(self.noiseG, self.neuronsE, syn_spec={"weight": 2})
+        Connect(self.noiseG, self.neuronsI, syn_spec={"weight": 2})
         # --------------------> Monitor Connections
         # Multimeter connects to all neurons. Spike recorder only to excitatory
         Connect(self.monitor_vm, self.neuronsE, syn_spec={'synapse_model': 'Monitor'})
@@ -221,14 +225,16 @@ def readout(X: ndarray, label: ndarray, classifier, train: bool = False, cm: boo
         # Train classifier
         classifier.fit(X, label)
     # Get accuracy
+    cm_result = None
     if cm:
         y_pred = classifier.predict(X)
-        print(confusion_matrix(label, y_pred))
+        cm_result = confusion_matrix(label, y_pred)
+        print(cm_result)
 
     accuracy: float = classifier.score(X, label)
-    return accuracy, classifier
+    return accuracy, classifier, cm_result
 
-def validation(encoding: Encoding, lsm: LSM, data: dict, time_sim: float) -> tuple[float, ndarray, list, list]:
+def validation(encoding: Encoding, lsm: LSM, data: dict, time_sim: float) -> tuple[float, ndarray, list, list, ndarray]:
     """
     Validation process
     :param lsm: LSM net.
@@ -252,12 +258,12 @@ def validation(encoding: Encoding, lsm: LSM, data: dict, time_sim: float) -> tup
         X_val.append(rate)
     X_val = npArray(X_val)
     #   Get Readout results
-    acc_val,_ = readout(X_val, data["Labels"], encoding.classifier, train=False, cm=True)
-    return acc_val, X_val, S_val, V_val
+    acc_val,_, cm = readout(X_val, data["Labels"], encoding.classifier, train=False, cm=True)
+    return acc_val, X_val, S_val, V_val, cm
 
 def validation_sequence(data: dict, labels: list[str], population: list, logbook: tools.Logbook, hof: tools.HallOfFame,
                         time_sim: float, individual_on: str | int = "Best", inConnectivity: float = 0.5,
-                        plot_options: dict | None = None) -> float:
+                        plot_options: dict | None = None) -> tuple[float, ndarray]:
     """
     Validation Sequence:
         1. Plots convergence plot.
@@ -325,7 +331,7 @@ def validation_sequence(data: dict, labels: list[str], population: list, logbook
     #   Build LSM
     lsm = LSM(encoding, inConn=inConnectivity)
     #   Do validation
-    acc, states, spikes, vms = validation(encoding, lsm, data, time_sim)
+    acc, states, spikes, vms, cm = validation(encoding, lsm, data, time_sim)
     #   Show LSM
     if plot_options["liquid"]:
         visualize_liquid(lsm)
@@ -347,7 +353,7 @@ def validation_sequence(data: dict, labels: list[str], population: list, logbook
             plot_vm_separate(vms[i], lsm, name=f"Class {c}: Membrane Potential per Neuron")
             plot_vm_separate(vms[i], lsm, name=f"Class {c}: Membrane Potential per Neuron with Threshold values",
                              w_threshold=True)
-    return acc
+    return acc, cm
 
 if __name__ == '__main__':
     """ Test on differences between simulations"""

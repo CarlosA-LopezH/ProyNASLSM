@@ -25,7 +25,7 @@ from multiprocessing import cpu_count, Pool
 from sklearn.linear_model import Perceptron
 from numpy import mean as npMean, std as npStd, min as npMin, max as npMax
 from pathlib import Path
-from statistics import mean as pyMean
+from statistics import mean as pyMean, stdev as pyStdev
 from random import setstate as pySetstate, random as pyRandom, getstate as pyGetstate
 from numpy.random import set_state as npSetstate, get_state as npGetstate
 import psutil
@@ -37,7 +37,11 @@ from lib.operationsEvo import initEncoding, evaluation, xover_blx, mutation_simp
 from lib.auxiliary import ExecutionTime, split_data
 from lib.LSM import validation_sequence
 
-def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[float, float, int, float]:
+# Create fitness and individual classes.
+creator.create("Fitness", base.Fitness, weights=(1.0,))  # Fitness maximization.
+creator.create("Individual", Encoding, fitness=creator.Fitness) # Individual class based on encoding.
+
+def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[float, tuple, base.Toolbox]:
     """
     Main algorithm.
     :param ds_name: Name of the dataset.
@@ -55,23 +59,20 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
     # Separation of data:
     # Train-Test = 70% | Validation = 30% (p_validation)
     # Train = 70% (p_train) | Test = 30%
-    data_evolve, data_val = split_data(classes=data["Classes"], data=data, p_validation=0.3, p_train=0.7)
+    data_evolve, data_val = split_data(classes=data["Classes"], data=data, p_validation=0.8, p_train=0.7)
     labels: list = data["Labels Names"] # List of name of labels.
     # ---- GA Parameters:
     pop_size: int = 50 # Population size.
     gen_max: int = 100 # Max number of generations.
     t_size: int = int(0.25 * pop_size) # Tournament size.
-    cr: float = 0.7 # Crossover rate.
-    mr: float = 0.5 # Mutation rate.
+    cr: float = 0.5 # Crossover rate.
+    mr: float = 0.8 # Mutation rate.
     elitism: int = int(0.05 * pop_size) # Number of individuals to be preserved.
     # ---- LSM Parameters:
     channels: int = data["Channels"] # Number of input channels.
     sim_time: int = data["Tmax"] + 10 # Duration of NEST simulation.
     net_size: tuple | int = 20 # Number of neurons in the liquid.
     # ---- DEAP Framework:
-    # Create fitness and individual classes.
-    creator.create("Fitness", base.Fitness, weights=(1.0,))  # Fitness maximization.
-    creator.create("Individual", Encoding, fitness=creator.Fitness) # Individual class based on encoding.
     # DEAP toolbox.
     toolbox = base.Toolbox()
     toolbox.register("individual", initEncoding, encoding=creator.Individual, dimensions=net_size, channels=channels) # Set individual.
@@ -150,9 +151,6 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
             save_checkpoint(root="checkpoints", id_method=method, id_run=id_run, gen=gen, pop=pop, hof=hof, log=logbook,
                             py_state=pyGetstate(), np_state=npGetstate())
         gen += 1 # Update generation
-    # Las checkpoints update.
-    save_checkpoint(root="checkpoints", id_method=method, id_run=id_run, gen=gen, pop=pop, hof=hof, log=logbook,
-                    py_state=pyGetstate(), np_state=npGetstate(), last=True)
     # Close the multiprocessing pool to free resources, if necessary.
     if n_workers > 1:
         pool.close()
@@ -163,11 +161,38 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
                     "vms": False, "input": False} # Plot visualization options.
     acc_val = validation_sequence(data=data_val, labels=labels, population=pop, logbook=logbook, hof=hof,
                                   time_sim=sim_time, individual_on="Best", plot_options=plot_options)
-    return bf, acc_val, logbook.select("evals")[-1], logbook.select("t")[-1]
+
+    # Las checkpoints update.
+    save_checkpoint(root="checkpoints", id_method=method, id_run=id_run, gen=gen, pop=pop, hof=hof, log=logbook,
+                    py_state=pyGetstate(), np_state=npGetstate(), last=True, validation=acc_val)
+    return bf, acc_val, logbook
 
 if __name__ == '__main__':
     method = "GA_BLX_Perceptron-MCA2025"
-    for i in range(30):
+    db = "PR4"
+    initial_b = []
+    final_b = []
+    validation_b = []
+    for i in range(3):
         print(f">>>>>>>>>>>> Run {i+1} <<<<<<<<<<<<")
-        main(ds_name="PR12", id_method=f"{method}", id_run=f"{i+1}", n_workers=cpu_count())
+        best_fitness, validation, lb = main(ds_name=db, id_method=f"{method}", id_run=f"{i+1}",
+                                            n_workers=cpu_count()-4)
+        initial_b.append(lb[0]["max"])
+        final_b.append(best_fitness)
+        validation_b.append(validation[0])
+
+    # Save summary
+    with open(f"Results/{method}_Summary.data", "wb") as f:
+        pickle.dump(obj={"Init_list": initial_b, "Init_mean": pyMean(initial_b), "Init_stdev": pyStdev(initial_b),
+                         "Fin_list": final_b, "Fin_mean": pyMean(final_b), "Fin_stdev": pyStdev(final_b),
+                         "Val_list": validation_b, "Val_mean": pyMean(validation_b), "Val_stdec": pyStdev(validation_b)},
+                    file=f)
+    print("----------- Summary -----------")
+    print(f"Initial: {pyMean(initial_b)} +-{pyStdev(initial_b)}")
+    print(f"Final: {pyMean(final_b)} +-{pyStdev(final_b)}")
+    print(f"Validation: {pyMean(validation_b)} +-{pyStdev(validation_b)}")
+
+
+
+
 

@@ -61,11 +61,11 @@ def evaluation(individual: Encoding, inputs: dict, time_sim: float, classifier =
     x_train = npArray(X[:inputs["Point"]])
     x_test = npArray(X[inputs["Point"]:])
     if x_test.shape[0] > 0:
-        train_acc, classifier = readout(x_train, labels[:inputs["Point"]], classifier(), train=True)
+        train_acc, classifier, _ = readout(x_train, labels[:inputs["Point"]], classifier(), train=True)
         # print(f"Train Accuracy: {train_acc}")
-        acc, _ = readout(x_test, labels[inputs["Point"]:], classifier, train=False)
+        acc, *_ = readout(x_test, labels[inputs["Point"]:], classifier, train=False)
     else:
-        acc, classifier = readout(x_train, labels, classifier(), train=True)
+        acc, classifier, _ = readout(x_train, labels, classifier(), train=True)
     return (acc,), classifier
 
 # ----------------------------------------------------- #
@@ -151,7 +151,7 @@ def xover_blx(parent1: Encoding, parent2: Encoding, alpha: float = 0.5) -> tuple
         child1.polarity_indexing()
         child1.set_seed()
         child1.classifier = None
-        # Update encodings: Child 1
+        # Update encodings: Child 2
         child2.polarity_indexing()
         child2.set_seed()
         child2.classifier = None
@@ -271,8 +271,8 @@ def mutation_simple(individual: Encoding) -> Encoding:
 # ----------------------------------------------------- #
 def get_checkpoint(root: str, id_method: str, id_run: str) -> tuple:
     """
-    Recover checkpoints
-    :param root: Root directory to retrieve checkpoints.
+    Recover checkpoint
+    :param root: Root directory to retrieve checkpoint.
     :param id_method: ID of the method.
     :param id_run: ID of the run.
     :return:
@@ -285,15 +285,15 @@ def get_checkpoint(root: str, id_method: str, id_run: str) -> tuple:
     logbook = checkpoint["Logbook"]
     pyState = checkpoint["pyRandomState"]
     npState = checkpoint["npRandomState"]
-    print(f"Loading checkpoints {id_method}_{id_run}.chck")
+    print(f"Loading checkpoint {id_method}_{id_run}.chck")
     print(f"Current run time: {logbook.select('t')[-1]}")
     print(f"Starting from generation: {gen}")
     return gen, pop, hof, logbook, pyState, npState
 
-def save_checkpoint(root: str, id_method: str, id_run: str, gen, pop, hof, log, py_state, np_state, last: bool = False) -> None:
+def save_checkpoint(root: str, id_method: str, id_run: str, gen, pop, hof, log, py_state, np_state, last: bool = False, validation = None) -> None:
     """
-    Save checkpoints
-    :param root: Root directory to retrieve checkpoints.
+    Save checkpoint
+    :param root: Root directory to retrieve checkpoint.
     :param id_method: ID of the method.
     :param id_run: ID of the run.
     :param gen: Current generation.
@@ -302,7 +302,7 @@ def save_checkpoint(root: str, id_method: str, id_run: str, gen, pop, hof, log, 
     :param log: Logbook
     :param py_state: Python random state.
     :param np_state: Numpy random state.
-    :param last: Flag to indicate if this is the last checkpoints.
+    :param last: Flag to indicate if this is the last checkpoint.
     :return:
     """
     checkpoint = {"Generation": gen,
@@ -314,9 +314,10 @@ def save_checkpoint(root: str, id_method: str, id_run: str, gen, pop, hof, log, 
     with open(f"{root}/{id_method}_{id_run}.chck", "wb") as file:
         pickle.dump(checkpoint, file)
     if not last:
-        print(f"Saved checkpoints for generation: {gen}!")
+        checkpoint["Validation"] = validation
+        print(f"Saved checkpoint for generation: {gen}!")
     else:
-        print(f"Saved last checkpoints!")
+        print(f"Saved last checkpoint!")
 
 
 
