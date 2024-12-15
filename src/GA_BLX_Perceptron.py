@@ -65,8 +65,8 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
     pop_size: int = 50 # Population size.
     gen_max: int = 100 # Max number of generations.
     t_size: int = int(0.25 * pop_size) # Tournament size.
-    cr: float = 0.5 # Crossover rate.
-    mr: float = 0.8 # Mutation rate.
+    cr: float = 0.7 # Crossover rate.
+    mr: float = 0.3 # Mutation rate.
     elitism: int = int(0.05 * pop_size) # Number of individuals to be preserved.
     # ---- LSM Parameters:
     channels: int = data["Channels"] # Number of input channels.
