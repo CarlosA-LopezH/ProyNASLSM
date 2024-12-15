@@ -41,7 +41,7 @@ from lib.LSM import validation_sequence
 creator.create("Fitness", base.Fitness, weights=(1.0,))  # Fitness maximization.
 creator.create("Individual", Encoding, fitness=creator.Fitness) # Individual class based on encoding.
 
-def main(ds_name, id_method: str, id_run: str, n_workers: int) -> tuple[float, tuple, base.Toolbox]:
+def main(ds_name, id_method, id_run, n_workers) -> tuple[float, tuple, base.Toolbox]:
     """
     Main algorithm.
     :param ds_name: Name of the dataset.
