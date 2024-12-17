@@ -100,8 +100,8 @@ class LSM:
         self.noiseG = Create("noise_generator", params={"mean": self.neuronNoise_mean,
                                                         "std": self.neuronNoise_std,
                                                         "std_mod": self.neuronNoise_std,
-                                                        "phase": 1.,
-                                                        "frequency": 250.})
+                                                        "phase": 0.,
+                                                        "frequency": 1000.})
         # Create Monitors
         self.monitor_vm = Create(model="multimeter", params={"record_from": ["V_m"]})
         self.monitor_spikes = Create(model="spike_recorder")
@@ -125,8 +125,8 @@ class LSM:
                                                          'allow_autapses': False},
                 syn_spec={"synapse_model": "i_syn", "weight": gaussian(distance) * -2 * self.Ws})
         # --------------------> Noise connections
-        Connect(self.noiseG, self.neuronsE, syn_spec={"weight": 2})
-        Connect(self.noiseG, self.neuronsI, syn_spec={"weight": 2})
+        Connect(self.noiseG, self.neuronsE, syn_spec={"weight": 1})
+        Connect(self.noiseG, self.neuronsI, syn_spec={"weight": 1})
         # --------------------> Monitor Connections
         # Multimeter connects to all neurons. Spike recorder only to excitatory
         Connect(self.monitor_vm, self.neuronsE, syn_spec={'synapse_model': 'Monitor'})
