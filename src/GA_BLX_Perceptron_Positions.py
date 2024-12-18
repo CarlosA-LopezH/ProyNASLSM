@@ -225,7 +225,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
     method: str = f"{id_method}-{ds_name}" # ID of the method. Intended to identify results and checkpoints.
     freq_check: int = 5 # Frequency of saving checkpoints.
     # Load Dataset
-    with open(f"../Datasets/{ds_name}.data", "rb") as file:
+    with open(f"../data/{ds_name}.data", "rb") as file:
         data = pickle.load(file)
     # Separation of data:
     # Train-Test = 70% | Validation = 30% (p_validation)
