@@ -222,7 +222,7 @@ def set_positions(neurons):
         invalid = True
     return positions
 
-def main(ds_name: str, id_method: str, id_run: str, n_workers: int, root: str = "") -> tuple[float, float, int, float]:
+def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[float, float, int, float]:
     """
     Main algorithm.
     :param ds_name: Name of the dataset.
@@ -235,7 +235,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int, root: str = 
     method: str = f"{id_method}-{ds_name}" # ID of the method. Intended to identify results and checkpoints.
     freq_check: int = 5 # Frequency of saving checkpoints.
     # Load Dataset
-    with open(f"{root}/data/{ds_name}.data", "rb") as file:
+    with open(f"../data/{ds_name}.data", "rb") as file:
         data = pickle.load(file)
     # Separation of data:
     # Train-Test = 70% | Validation = 30% (p_validation)
@@ -278,7 +278,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int, root: str = 
     stats.register("min", npMin)
     stats.register("max", npMax)
     # Check if a checkpoint exists to resume the evolution.
-    if not Path(f"{root}/checkpoints/{method}_{id_run}.chck").exists():
+    if not Path(f"checkpoints/{method}_{id_run}.chck").exists():
         gen: int = 0 # Initialize generation count.
         pop: list = toolbox.population(n=pop_size) # Population initialization.
         hof = tools.HallOfFame(1) # Hall of Fame for the best individual.
@@ -293,7 +293,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int, root: str = 
         print(f"Initial Population (Gen 0): {record_stats} - Elapsed Time: {time.report_elapsed(): .4} - Neurons: {pyMean([p.nT for p in pop])}")
         time.update() # Update time.
     else: # Load from checkpoint.
-        gen, pop, hof, logbook, py_state, np_state = get_checkpoint(root=f"{root}/checkpoints", id_method=method,
+        gen, pop, hof, logbook, py_state, np_state = get_checkpoint(root=f"checkpoints", id_method=method,
                                                                     id_run=id_run)
         pySetstate(py_state) # Set python state.
         npSetstate(np_state) # Set numpy state.
@@ -332,11 +332,11 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int, root: str = 
         time.update() # Update time.
         bf = logbook.select("max")[-1] # Get the best fitness so far.
         if gen % freq_check == 0: # Update checkpoint.
-            save_checkpoint(root=f"{root}/checkpoints", id_method=method, id_run=id_run, gen=gen, pop=pop, hof=hof, log=logbook,
+            save_checkpoint(root=f"checkpoints", id_method=method, id_run=id_run, gen=gen, pop=pop, hof=hof, log=logbook,
                             py_state=pyGetstate(), np_state=npGetstate())
         gen += 1 # Update generation
     # Las checkpoint update.
-    save_checkpoint(root=f"{root}/checkpoints", id_method=method, id_run=id_run, gen=gen, pop=pop, hof=hof, log=logbook,
+    save_checkpoint(root=f"checkpoints", id_method=method, id_run=id_run, gen=gen, pop=pop, hof=hof, log=logbook,
                     py_state=pyGetstate(), np_state=npGetstate(), last=True)
     # Close the multiprocessing pool to free resources, if necessary.
     if n_workers > 1:
@@ -352,5 +352,4 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int, root: str = 
 if __name__ == '__main__':
     db = "FR5"
     method = "GA_BLX_Perceptron-GECCO2025_Configurations"
-    main(ds_name=db, id_method=method, id_run="1", n_workers=cpu_count(),
-         root="/content/drive/MyDrive/Experiments/GECCO2025")
+    main(ds_name=db, id_method=method, id_run="1", n_workers=cpu_count())
