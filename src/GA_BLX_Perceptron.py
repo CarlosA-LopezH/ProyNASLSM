@@ -155,7 +155,6 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
     if n_workers > 1:
         pool.close()
         pool.join()
-
     # ---- Validation:
     plot_options = {"convergence": False, "time": False, "liquid": False, "separability": False, "spikes": False,
                     "vms": False, "input": False} # Plot visualization options.

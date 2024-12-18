@@ -8,7 +8,7 @@ from sklearn.linear_model import Perceptron
 from random import setstate as pySetstate, random as pyRandom, getstate as pyGetstate, uniform as pyUniform
 from numpy import mean as npMean, std as npStd, min as npMin, max as npMax
 from pathlib import Path
-from statistics import mean as pyMean
+from statistics import mean as pyMean, stdev as pyStdev
 from random import sample
 # DEAP imports
 from deap import base, creator, tools
@@ -222,7 +222,7 @@ def set_positions(neurons):
         invalid = True
     return positions
 
-def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[float, float, int, float]:
+def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[float, tuple, base.Toolbox]:
     """
     Main algorithm.
     :param ds_name: Name of the dataset.
@@ -335,21 +335,42 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
             save_checkpoint(root=f"checkpoints", id_method=method, id_run=id_run, gen=gen, pop=pop, hof=hof, log=logbook,
                             py_state=pyGetstate(), np_state=npGetstate())
         gen += 1 # Update generation
-    # Las checkpoint update.
-    save_checkpoint(root=f"checkpoints", id_method=method, id_run=id_run, gen=gen, pop=pop, hof=hof, log=logbook,
-                    py_state=pyGetstate(), np_state=npGetstate(), last=True)
     # Close the multiprocessing pool to free resources, if necessary.
     if n_workers > 1:
         pool.close()
         pool.join()
-
     # ---- Validation:
-    plot_options = {"convergence": True, "time": False, "liquid": True, "separability": False, "spikes": False,
-                    "vms": True, "input": False}  # Plot visualization options.
-    validation_sequence(data=data_val, labels=labels, population=pop, logbook=logbook, hof=hof, time_sim=sim_time,
-                        individual_on="Best", plot_options=plot_options)
+    plot_options = {"convergence": False, "time": False, "liquid": False, "separability": False, "spikes": False,
+                    "vms": False, "input": False}  # Plot visualization options.
+    acc_val = validation_sequence(data=data_val, labels=labels, population=pop, logbook=logbook, hof=hof, time_sim=sim_time,
+                                  individual_on="Best", plot_options=plot_options)
+    # Las checkpoint update.
+    save_checkpoint(root=f"checkpoints", id_method=method, id_run=id_run, gen=gen, pop=pop, hof=hof, log=logbook,
+                    py_state=pyGetstate(), np_state=npGetstate(), last=True, validation=acc_val)
+    return bf, acc_val, logbook
 
 if __name__ == '__main__':
     db = "FR5"
     method = "GA_BLX_Perceptron-GECCO2025_Configurations"
-    main(ds_name=db, id_method=method, id_run="1", n_workers=cpu_count())
+    initial_b = []
+    final_b = []
+    validation_b = []
+    for i in range(30):
+        print(f">>>>>>>>>>>> Run {i + 1} <<<<<<<<<<<<")
+        best_fitness, validation, lb = main(ds_name=db, id_method=f"{method}", id_run=f"{i + 1}",
+                                            n_workers=cpu_count())
+        initial_b.append(lb[0]["max"])
+        final_b.append(best_fitness)
+        validation_b.append(validation[0])
+
+    # Save summary
+    with open(f"Results/{method}_Summary.data", "wb") as f:
+        pickle.dump(obj={"Init_list": initial_b, "Init_mean": pyMean(initial_b), "Init_stdev": pyStdev(initial_b),
+                         "Fin_list": final_b, "Fin_mean": pyMean(final_b), "Fin_stdev": pyStdev(final_b),
+                         "Val_list": validation_b, "Val_mean": pyMean(validation_b),
+                         "Val_stdec": pyStdev(validation_b)},
+                    file=f)
+    print("----------- Summary -----------")
+    print(f"Initial: {pyMean(initial_b)} +-{pyStdev(initial_b)}")
+    print(f"Final: {pyMean(final_b)} +-{pyStdev(final_b)}")
+    print(f"Validation: {pyMean(validation_b)} +-{pyStdev(validation_b)}")
