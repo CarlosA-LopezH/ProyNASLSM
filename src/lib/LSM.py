@@ -37,7 +37,7 @@ class LSM:
         self.seed: int = encoding.lsm_seed  # NEST seed.
         self.inConn = inConn  # Input connectivity.
         self.neuronNoise_mean: float = neuronNoise_mean  # Standard deviation of the noise current amplitude (pA)
-        self.neuronNoise_std: float = neuronNoise_mean # Standard deviation of the noise current amplitude (pA)
+        self.neuronNoise_std: float = neuronNoise_mean / 2 # Standard deviation of the noise current amplitude (pA)
         self.Ws: float = Ws  # General strength for synapsis
         # TODO: Add window parameter to control the starting time for monitors to get information.
         # Topology parameters
