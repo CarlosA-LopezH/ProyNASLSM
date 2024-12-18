@@ -173,7 +173,7 @@ if __name__ == '__main__':
     initial_b = []
     final_b = []
     validation_b = []
-    for i in range(30):
+    for i in range(10):
         print(f">>>>>>>>>>>> Run {i+1} <<<<<<<<<<<<")
         best_fitness, validation, lb = main(ds_name=db, id_method=f"{method}", id_run=f"{i+1}",
                                             n_workers=cpu_count())
