@@ -59,9 +59,9 @@ class Enc_Position:
         :return: dictionary with configurations.
         """
         # Build configuration
-        configuration = {'t_ref': 2.,
-                         'tau_m': 10.,
-                         'v_th': -55.,
+        configuration = {'t_ref': round(uniform(self._T_REF[0], self._T_REF[-1]), 2),
+                         'tau_m': round(uniform(self._TAU_M[0], self._TAU_M[-1]), 2),
+                         'v_th': round(uniform(self._V_TH[0], self._V_TH[-1]), 2),
                          'polarity': 'E' if npRandom() < self._PROB_E else 'I'}
         return configuration
 
