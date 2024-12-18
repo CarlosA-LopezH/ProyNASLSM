@@ -337,7 +337,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
     # Las checkpoint update.
     save_checkpoint(root="checkpoints", id_method=method, id_run=id_run, gen=gen, pop=pop, hof=hof, log=logbook,
                     py_state=pyGetstate(), np_state=npGetstate(), last=True, validation=acc_val)
-
+    return bf, acc_val, logbook
 
 if __name__ == '__main__':
     db = "FR5"
