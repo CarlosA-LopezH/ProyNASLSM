@@ -222,6 +222,10 @@ def set_positions(neurons):
         invalid = True
     return positions
 
+# Create fitness and individual classes.
+creator.create("Fitness", base.Fitness, weights=(1.0,))  # Fitness maximization.
+creator.create("Individual", Enc_Configuration, fitness=creator.Fitness) # Individual class based on encoding.
+
 def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[float, tuple, base.Toolbox]:
     """
     Main algorithm.
@@ -255,9 +259,6 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
     net_size: int = 20 # Number of neurons in the liquid.
     positions = set_positions(net_size)
     # ---- DEAP Framework:
-    # Create fitness and individual classes.
-    creator.create("Fitness", base.Fitness, weights=(1.0,))  # Fitness maximization.
-    creator.create("Individual", Enc_Configuration, fitness=creator.Fitness) # Individual class based on encoding.
     # DEAP toolbox.
     toolbox = base.Toolbox()
     toolbox.register("individual", initEncoding, encoding=creator.Individual, dimensions=net_size, channels=channels, positions=positions) # Set individual.
