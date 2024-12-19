@@ -237,12 +237,12 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
     data_evolve, data_val = split_data(classes=data["Classes"], data=data, p_validation=0.3, p_train=0.7)
     labels: list = data["Labels Names"] # List of name of labels.
     # ---- GA Parameters:
-    pop_size: int = 20 # Population size.
+    pop_size: int = 50 # Population size.
     gen_max: int = 100 # Max number of generations.
-    t_size: int = 5 # Tournament size.
+    t_size: int = int(0.25 * pop_size) # Tournament size.
     cr: float = 0.8 # Crossover rate.
     mr: float = 0.5 # Mutation rate.
-    elitism: int = 1 # Number of individuals to be preserved.
+    elitism: int = int(0.05 * pop_size) # Number of individuals to be preserved.
     # ---- LSM Parameters:
     channels: int = data["Channels"] # Number of input channels.
     sim_time: int = data["Tmax"] + 10 # Duration of NEST simulation.
