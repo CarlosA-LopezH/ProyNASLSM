@@ -168,7 +168,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
 
 if __name__ == '__main__':
     method = "GA_BLX_Perceptron-MCA2025"
-    db = "PR4"
+    db = "PR12"
     initial_b = []
     final_b = []
     validation_b = []
