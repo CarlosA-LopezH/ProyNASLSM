@@ -181,7 +181,7 @@ if __name__ == '__main__':
         validation_b.append(validation[0])
 
     # Save summary
-    with open(f"Results/{method}_Summary.data", "wb") as f:
+    with open(f"Results/{method}-{db}_Summary.data", "wb") as f:
         pickle.dump(obj={"Init_list": initial_b, "Init_mean": pyMean(initial_b), "Init_stdev": pyStdev(initial_b),
                          "Fin_list": final_b, "Fin_mean": pyMean(final_b), "Fin_stdev": pyStdev(final_b),
                          "Val_list": validation_b, "Val_mean": pyMean(validation_b), "Val_stdec": pyStdev(validation_b)},
