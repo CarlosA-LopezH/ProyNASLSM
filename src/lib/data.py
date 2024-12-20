@@ -297,7 +297,8 @@ if __name__ == '__main__':
     with open("../Experiments/Datasets/PR12.data", "rb") as file:
         example = pickle.load(file)
 
-    nmn = nmnist("Nmnist","../Experiments/Datasets/N_MNIST", plot=False)
+    nmn = nmnist("Nmnist","../data/", plot=False)
+
     # from visualization import plot_input_classes, plot_PR_visualization
 
     # h = 100 # High Freq
