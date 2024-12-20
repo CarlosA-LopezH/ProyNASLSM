@@ -293,9 +293,9 @@ def create_grid(images, grid_size):
     return grid_img
 
 if __name__ == '__main__':
-    import numpy as np
-    with open("../Experiments/Datasets/PR12.data", "rb") as file:
-        example = pickle.load(file)
+    # import numpy as np
+    # with open("../Experiments/Datasets/PR12.data", "rb") as file:
+    #     example = pickle.load(file)
 
     nmn = nmnist("Nmnist","../data/", plot=False)
 
