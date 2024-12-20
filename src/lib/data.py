@@ -242,7 +242,8 @@ def nmnist(name: str, root: str, plot: bool =True):
 
     spikes = []
     labels = []
-    for data in [*nm1, *nm2]:
+    for n, data in enumerate([*nm1, *nm2]):
+        print(f"Processing {n+1}/{len(nm1) + len(nm2)}")
         events, l = data
         labels.append(l)
         channels = [[] for _ in range(17 * 17)]
