@@ -255,7 +255,7 @@ def nmnist(name: str, root: str, plot: bool =True):
     dataset = {"Spikes": spikes, "Labels": npArray(labels), "Channels": 17 * 17, "Classes": 10,
                "Tmax": 200000 / 1000, "Labels Names": [f"C{str(c)}" for c in range(10)]}
     # Save data file
-    with open(f"../Experiments/Datasets/{name}.data", "wb") as file:
+    with open(f"../data/{name}.data", "wb") as file:
         pickle.dump(dataset, file)
     return dataset
 
