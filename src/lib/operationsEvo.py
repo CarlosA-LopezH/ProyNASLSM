@@ -313,7 +313,7 @@ def save_checkpoint(root: str, id_method: str, id_run: str, gen, pop, hof, log, 
                   "npRandomState": np_state}
     with open(f"{root}/{id_method}_{id_run}.chck", "wb") as file:
         pickle.dump(checkpoint, file)
-    if not last:
+    if last:
         checkpoint["Validation"] = validation
         print(f"Saved checkpoint for generation: {gen}!")
     else:
