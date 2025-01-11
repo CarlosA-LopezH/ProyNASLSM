@@ -340,7 +340,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
     return bf, acc_val, logbook
 
 if __name__ == '__main__':
-    db = "PR8"
+    db = "PR12"
     method = "GA_BLX_Perceptron-GECCO2025_Positions"
     initial_b = []
     final_b = []
