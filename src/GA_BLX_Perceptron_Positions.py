@@ -231,7 +231,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
     # Load Dataset
     # For colab: /content/drive/MyDrive/...........
     # For Server and local: ../data/
-    with open(f"/content/drive/MyDrive/Experiments/GECCO2025/data/{ds_name}.data", "rb") as file:
+    with open(f"../data/{ds_name}.data", "rb") as file:
         data = pickle.load(file)
     # Separation of data:
     # Train-Test = 70% | Validation = 30% (p_validation)
@@ -271,8 +271,8 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
     stats.register("max", npMax)
     # Check if a checkpoint exists to resume the evolution.
     # For colab: /content/drive/MyDrive/...........
-    # For Server and local: ../data/
-    if not Path(f"/content/drive/MyDrive/Experiments/GECCO2025/Position/checkpoints/{method}_{id_run}.chck").exists():
+    # For Server and local: checkpoints/
+    if not Path(f"checkpoints/{method}_{id_run}.chck").exists():
         gen: int = 0 # Initialize generation count.
         pop: list = toolbox.population(n=pop_size) # Population initialization.
         hof = tools.HallOfFame(1) # Hall of Fame for the best individual.
@@ -287,7 +287,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
         print(f"Initial Population (Gen 0): {record_stats} - Elapsed Time: {time.report_elapsed(): .4} - Neurons: {pyMean([p.nT for p in pop])}")
         time.update() # Update time.
     else: # Load from checkpoint.
-        gen, pop, hof, logbook, py_state, np_state = get_checkpoint(root="/content/drive/MyDrive/Experiments/GECCO2025/Position/checkpoints", id_method=method,
+        gen, pop, hof, logbook, py_state, np_state = get_checkpoint(root="checkpoints", id_method=method,
                                                                     id_run=id_run)
         pySetstate(py_state) # Set python state.
         npSetstate(np_state) # Set numpy state.
@@ -326,7 +326,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
         time.update() # Update time.
         bf = logbook.select("max")[-1] # Get the best fitness so far.
         if gen % freq_check == 0: # Update checkpoint.
-            save_checkpoint(root="/content/drive/MyDrive/Experiments/GECCO2025/Position/checkpoints", id_method=method, id_run=id_run, gen=gen, pop=pop, hof=hof, log=logbook,
+            save_checkpoint(root="checkpoints", id_method=method, id_run=id_run, gen=gen, pop=pop, hof=hof, log=logbook,
                             py_state=pyGetstate(), np_state=npGetstate())
         gen += 1 # Update generation
     # Close the multiprocessing pool to free resources, if necessary.
@@ -339,7 +339,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
     acc_val = validation_sequence(data=data_val, labels=labels, population=pop, logbook=logbook, hof=hof, time_sim=sim_time,
                                   individual_on="Best", plot_options=plot_options)
     # Las checkpoint update.
-    save_checkpoint(root="/content/drive/MyDrive/Experiments/GECCO2025/Position/checkpoints", id_method=method, id_run=id_run, gen=gen, pop=pop, hof=hof, log=logbook,
+    save_checkpoint(root="checkpoints", id_method=method, id_run=id_run, gen=gen, pop=pop, hof=hof, log=logbook,
                     py_state=pyGetstate(), np_state=npGetstate(), last=True, validation=acc_val)
     return bf, acc_val, logbook
 
