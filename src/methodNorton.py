@@ -423,7 +423,7 @@ def Norton_Methodology(classes, data_, channels, seed):
             spike_states = lsm.do_simulation(data_["Spikes"], 120.)
             bStates = np.array([binary_state(s, first_id, window=10) for s in spike_states])
             classifier.fit(bStates[:data_["Point"]], data_["Labels"][:data_["Point"]])
-            acc_r = classifier.score(bStates["Spikes"][data_["Point"]:], data_["Labels"][data_["Point"]:])
+            acc_r = classifier.score(bStates[data_["Point"]:], data_["Labels"][data_["Point"]:])
             print("Accuracy: ", acc_r)
             acc.append(acc_r)
     return sep, acc
