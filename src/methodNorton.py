@@ -431,7 +431,7 @@ def Norton_Methodology(classes, data_, channels, seed):
 if __name__ == "__main__":
     import pickle
     from lib.auxiliary import split_data
-    task = 'FR5'
+    task = 'PR4'
     with open(f"../data/{task}.data", "rb") as file:
         data_all = pickle.load(file)
     data, _ = split_data(classes=data_all["Classes"], data=data_all, p_validation=0.7, p_train=0.75)
@@ -440,7 +440,7 @@ if __name__ == "__main__":
         results = Norton_Methodology(data_all["Classes"], data, data_all["Channels"], i + 1)
         all_results.append(results)
 
-        with open(f"Results/Norton_{task}-{i+1}.data", "wb") as f:
+        with open(f"Results/Norton.data", "wb") as f:
             pickle.dump({"Results": all_results}, file=f)
 
     # sep_star = calculate_sep_star(5, 64)
