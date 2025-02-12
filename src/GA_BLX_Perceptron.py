@@ -71,7 +71,7 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
     # ---- LSM Parameters:
     channels: int = data["Channels"] # Number of input channels.
     sim_time: int = data["Tmax"] + 10 # Duration of NEST simulation.
-    net_size: tuple | int = 20 # Number of neurons in the liquid.
+    net_size: tuple | int = 64 # Number of neurons in the liquid.
     # ---- DEAP Framework:
     # DEAP toolbox.
     toolbox = base.Toolbox()
@@ -167,8 +167,8 @@ def main(ds_name: str, id_method: str, id_run: str, n_workers: int) -> tuple[flo
     return bf, acc_val, logbook
 
 if __name__ == '__main__':
-    method = "GA_BLX_Perceptron-MCA2025"
-    db = "PR8"
+    method = "GA_BLX_Perceptron-MCA2025_64N"
+    db = "PR12"
     initial_b = []
     final_b = []
     validation_b = []
